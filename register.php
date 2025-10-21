@@ -1,6 +1,5 @@
-<?php include('config/koneksi.php'); ?>
-
 <?php
+require_once 'config/koneksi.php';
 if (isset($_POST['register'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -8,12 +7,14 @@ if (isset($_POST['register'])) {
     $no_hp = $_POST['no_hp'];
     $email = $_POST['email'];
 
+    // Cek apakah username sudah ada
     $cek = mysqli_query($koneksi, "SELECT * FROM user WHERE username='$username'");
     if (mysqli_num_rows($cek) > 0) {
         echo "<script>alert('Username sudah digunakan!');</script>";
     } else {
-        $query = "INSERT INTO user (username, password, nama_lengkap, no_handphone, email)
-                  VALUES ('$username', MD5('$password'), '$nama', '$no_hp', '$email')";
+        // Role otomatis 'user'
+        $query = "INSERT INTO user (username, password, nama_lengkap, no_handphone, email, role)
+                VALUES ('$username', MD5('$password'), '$nama', '$no_hp', '$email', 'user')";
         mysqli_query($koneksi, $query);
         echo "<script>alert('Registrasi berhasil! Silakan login.'); window.location='index.php';</script>";
     }

@@ -1,230 +1,118 @@
--- phpMyAdmin SQL Dump
--- version 5.2.2
--- https://www.phpmyadmin.net/
---
--- Host: localhost:3306
--- Waktu pembuatan: 12 Okt 2025 pada 06.45
--- Versi server: 8.4.3
--- Versi PHP: 8.3.16
+DROP DATABASE IF EXISTS db_perpustakaan;
+CREATE DATABASE db_perpustakaan CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE db_perpustakaan;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
 SET time_zone = "+00:00";
+START TRANSACTION;
 
+-- ==============================
+-- TABEL: anggota
+-- ==============================
+CREATE TABLE `anggota` (
+  `id_anggota` INT NOT NULL AUTO_INCREMENT,
+  `nama` VARCHAR(100) NOT NULL,
+  `alamat` TEXT,
+  `no_handphone` VARCHAR(15) DEFAULT NULL,
+  `email` VARCHAR(100) DEFAULT NULL,
+  `status` ENUM('aktif','non-aktif') DEFAULT 'aktif',
+  `tanggal_daftar` DATE DEFAULT NULL,
+  PRIMARY KEY (`id_anggota`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `db_perpustakaan`
---
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `admin`
---
-
-CREATE TABLE `admin` (
-  `id_admin` int NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data untuk tabel `admin`
---
-
-INSERT INTO `admin` (`id_admin`, `username`, `password`) VALUES
-(1, 'admin', 'c20ad4d76fe97759aa27a0c99bff6710');
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `buku`
---
-
+-- ==============================
+-- TABEL: buku
+-- ==============================
 CREATE TABLE `buku` (
-  `buku_id` int NOT NULL,
-  `judul` varchar(100) NOT NULL,
-  `pengarang` varchar(100) DEFAULT NULL,
-  `penerbit` varchar(100) DEFAULT NULL,
-  `tahun_terbit` year DEFAULT NULL,
-  `jumlah_stok` int DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `buku_id` INT NOT NULL AUTO_INCREMENT,
+  `judul` VARCHAR(100) NOT NULL,
+  `pengarang` VARCHAR(100) DEFAULT NULL,
+  `penerbit` VARCHAR(100) DEFAULT NULL,
+  `tahun_terbit` YEAR DEFAULT NULL,
+  `jumlah_stok` INT DEFAULT 0,
+  PRIMARY KEY (`buku_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- --------------------------------------------------------
+INSERT INTO `buku` (`buku_id`, `judul`, `pengarang`, `penerbit`, `tahun_terbit`, `jumlah_stok`) VALUES
+(1, 'My Boyfriends Wedding Dress', 'Kim Eun Jeong', 'Haru', '2009', 5);
 
---
--- Struktur dari tabel `detail_peminjaman`
---
-
-CREATE TABLE `detail_peminjaman` (
-  `detail_id` int NOT NULL,
-  `id_peminjaman` int NOT NULL,
-  `id_buku` int NOT NULL,
-  `jumlah` int DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `peminjaman`
---
-
-CREATE TABLE `peminjaman` (
-  `id_peminjaman` int NOT NULL,
-  `id_user` int NOT NULL,
-  `tgl_peminjaman` date DEFAULT (curdate()),
-  `status` enum('dipinjam','dikembalikan') DEFAULT 'dipinjam'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `pengembalian`
---
-
-CREATE TABLE `pengembalian` (
-  `id_pengembalian` int NOT NULL,
-  `id_peminjaman` int NOT NULL,
-  `tgl_pengembalian` date DEFAULT (curdate())
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Struktur dari tabel `user`
---
-
+-- ==============================
+-- TABEL: user
+-- ==============================
 CREATE TABLE `user` (
-  `id_user` int NOT NULL,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(100) NOT NULL,
-  `nama_lengkap` varchar(100) NOT NULL,
-  `no_handphone` varchar(15) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id_user` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(50) NOT NULL UNIQUE,
+  `password` VARCHAR(100) NOT NULL,
+  `nama` VARCHAR(100) NOT NULL,
+  `no_handphone` VARCHAR(15) DEFAULT NULL,
+  `email` VARCHAR(100) DEFAULT NULL,
+  `role` ENUM('admin','user') DEFAULT 'user',
+  PRIMARY KEY (`id_user`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data untuk tabel `user`
---
+INSERT INTO `user` (`id_user`, `username`, `password`, `nama`, `no_handphone`, `email`, `role`) VALUES
+(4, 'admin', 'c4ca4238a0b923820dcc509a6f75849b', 'Administrator', '081234567890', 'admin@library.com', 'admin'),
+(6, 'Almira', 'c4ca4238a0b923820dcc509a6f75849b', 'Resdina Sinaga', '088294638214', 'nishikawaspiker4@gmail.com', 'user');
 
-INSERT INTO `user` (`id_user`, `username`, `password`, `nama_lengkap`, `no_handphone`, `email`) VALUES
-(3, 'admin', '7815696ecbf1c96e6894b779456d330e', 'asd', 'asd', 'asd@gmail.com');
+-- ==============================
+-- TABEL: peminjaman
+-- ==============================
+CREATE TABLE `peminjaman` (
+  `id_peminjaman` INT NOT NULL AUTO_INCREMENT,
+  `id_anggota` INT NOT NULL,
+  `tanggal_pinjam` DATE DEFAULT NULL,
+  `tanggal_kembali` DATE DEFAULT NULL,
+  `status_peminjaman` ENUM('dipinjam','dikembalikan') DEFAULT 'dipinjam',
+  `denda` DECIMAL(10,2) DEFAULT 0.00,
+  PRIMARY KEY (`id_peminjaman`),
+  KEY `id_anggota` (`id_anggota`),
+  CONSTRAINT `peminjaman_ibfk_1` FOREIGN KEY (`id_anggota`) REFERENCES `anggota` (`id_anggota`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Indexes for dumped tables
---
+-- ==============================
+-- TABEL: detail_peminjaman
+-- ==============================
+CREATE TABLE `detail_peminjaman` (
+  `detail_id` INT NOT NULL AUTO_INCREMENT,
+  `id_peminjaman` INT NOT NULL,
+  `id_buku` INT NOT NULL,
+  `jumlah` INT DEFAULT 1,
+  PRIMARY KEY (`detail_id`),
+  KEY `id_peminjaman` (`id_peminjaman`),
+  KEY `id_buku` (`id_buku`),
+  CONSTRAINT `detail_peminjaman_ibfk_1` FOREIGN KEY (`id_peminjaman`) REFERENCES `peminjaman` (`id_peminjaman`) ON DELETE CASCADE,
+  CONSTRAINT `detail_peminjaman_ibfk_2` FOREIGN KEY (`id_buku`) REFERENCES `buku` (`buku_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Indeks untuk tabel `admin`
---
-ALTER TABLE `admin`
-  ADD PRIMARY KEY (`id_admin`),
-  ADD UNIQUE KEY `username` (`username`);
+-- ==============================
+-- TABEL: pengembalian
+-- ==============================
+CREATE TABLE `pengembalian` (
+  `id_pengembalian` INT NOT NULL AUTO_INCREMENT,
+  `id_peminjaman` INT NOT NULL,
+  `tanggal_pengembalian` DATE DEFAULT NULL,
+  `denda` DECIMAL(10,2) DEFAULT 0.00,
+  `keterangan` TEXT,
+  PRIMARY KEY (`id_pengembalian`),
+  KEY `id_peminjaman` (`id_peminjaman`),
+  CONSTRAINT `pengembalian_ibfk_1` FOREIGN KEY (`id_peminjaman`) REFERENCES `peminjaman` (`id_peminjaman`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Indeks untuk tabel `buku`
---
-ALTER TABLE `buku`
-  ADD PRIMARY KEY (`buku_id`);
+-- ==============================
+-- TABEL: log_aktivitas
+-- ==============================
+CREATE TABLE `log_aktivitas` (
+  `id_log` INT NOT NULL AUTO_INCREMENT,
+  `id_user` INT NOT NULL,
+  `aktivitas` VARCHAR(255) DEFAULT NULL,
+  `waktu` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_log`),
+  KEY `id_user` (`id_user`),
+  CONSTRAINT `log_aktivitas_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Indeks untuk tabel `detail_peminjaman`
---
-ALTER TABLE `detail_peminjaman`
-  ADD PRIMARY KEY (`detail_id`),
-  ADD KEY `id_peminjaman` (`id_peminjaman`),
-  ADD KEY `id_buku` (`id_buku`);
+INSERT INTO `log_aktivitas` (`id_log`, `id_user`, `aktivitas`, `waktu`) VALUES
+(1, 6, 'Melakukan Login', '2025-10-21 19:03:15'),
+(2, 4, 'Melakukan Login', '2025-10-21 19:03:20');
 
---
--- Indeks untuk tabel `peminjaman`
---
-ALTER TABLE `peminjaman`
-  ADD PRIMARY KEY (`id_peminjaman`),
-  ADD KEY `id_user` (`id_user`);
-
---
--- Indeks untuk tabel `pengembalian`
---
-ALTER TABLE `pengembalian`
-  ADD PRIMARY KEY (`id_pengembalian`),
-  ADD KEY `id_peminjaman` (`id_peminjaman`);
-
---
--- Indeks untuk tabel `user`
---
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id_user`),
-  ADD UNIQUE KEY `username` (`username`);
-
---
--- AUTO_INCREMENT untuk tabel yang dibuang
---
-
---
--- AUTO_INCREMENT untuk tabel `admin`
---
-ALTER TABLE `admin`
-  MODIFY `id_admin` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT untuk tabel `buku`
---
-ALTER TABLE `buku`
-  MODIFY `buku_id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `detail_peminjaman`
---
-ALTER TABLE `detail_peminjaman`
-  MODIFY `detail_id` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `peminjaman`
---
-ALTER TABLE `peminjaman`
-  MODIFY `id_peminjaman` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `pengembalian`
---
-ALTER TABLE `pengembalian`
-  MODIFY `id_pengembalian` int NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT untuk tabel `user`
---
-ALTER TABLE `user`
-  MODIFY `id_user` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
---
-
---
--- Ketidakleluasaan untuk tabel `detail_peminjaman`
---
-ALTER TABLE `detail_peminjaman`
-  ADD CONSTRAINT `detail_peminjaman_ibfk_1` FOREIGN KEY (`id_peminjaman`) REFERENCES `peminjaman` (`id_peminjaman`) ON DELETE CASCADE,
-  ADD CONSTRAINT `detail_peminjaman_ibfk_2` FOREIGN KEY (`id_buku`) REFERENCES `buku` (`buku_id`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `peminjaman`
---
-ALTER TABLE `peminjaman`
-  ADD CONSTRAINT `peminjaman_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `user` (`id_user`) ON DELETE CASCADE;
-
---
--- Ketidakleluasaan untuk tabel `pengembalian`
---
-ALTER TABLE `pengembalian`
-  ADD CONSTRAINT `pengembalian_ibfk_1` FOREIGN KEY (`id_peminjaman`) REFERENCES `peminjaman` (`id_peminjaman`) ON DELETE CASCADE;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
