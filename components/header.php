@@ -46,7 +46,7 @@ $role = $_SESSION['role'] ?? 'user';
                 </div>
                 <div class="ml-3">
                     <p class="font-medium"><?= htmlspecialchars($nama); ?></p>
-                    <p class="text-xs text-blue-200 capitalize">Administrator</p>
+                    <p class="text-xs text-blue-200 capitalize"><?= htmlspecialchars($role) ?></p>
                 </div>
             </div>
         </div>
