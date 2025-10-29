@@ -13,7 +13,7 @@ if (isset($_POST['register'])) {
         echo "<script>alert('Username sudah digunakan!');</script>";
     } else {
         // Role otomatis 'user'
-        $query = "INSERT INTO user (username, password, nama_lengkap, no_handphone, email, role)
+        $query = "INSERT INTO user (username, password, nama, no_handphone, email, role)
                 VALUES ('$username', MD5('$password'), '$nama', '$no_hp', '$email', 'user')";
         mysqli_query($koneksi, $query);
         echo "<script>alert('Registrasi berhasil! Silakan login.'); window.location='index.php';</script>";
@@ -34,11 +34,16 @@ if (isset($_POST['register'])) {
     <div class="bg-white p-8 rounded-2xl shadow-lg w-96">
         <h2 class="text-2xl font-bold mb-4 text-center">Daftar Akun</h2>
         <form method="POST">
+            <label for="username"></label>
             <input type="text" name="username" placeholder="Username" required class="w-full mb-3 p-2 border rounded">
+            <label for="password"></label>
             <input type="password" name="password" placeholder="Password" required
-                class="w-full mb-3 p-2 border rounded">
+            class="w-full mb-3 p-2 border rounded">
+            <label for="Nama Lengkap"></label>
             <input type="text" name="nama" placeholder="Nama Lengkap" required class="w-full mb-3 p-2 border rounded">
+            <label for="No Handphone"></label>
             <input type="text" name="no_hp" placeholder="No Handphone" class="w-full mb-3 p-2 border rounded">
+            <label for="Email"></label>
             <input type="email" name="email" placeholder="Email" class="w-full mb-3 p-2 border rounded">
             <button type="submit" name="register"
                 class="bg-blue-500 text-white w-full py-2 rounded hover:bg-blue-600">Daftar</button>

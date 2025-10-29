@@ -19,9 +19,10 @@ $tujuh_hari_lagi = date('Y-m-d', strtotime('+7 days'));
 $tenggat_waktu = mysqli_query(
     $koneksi,
     "SELECT COUNT(*) as total FROM peminjaman 
-     WHERE status_peminjaman = 'dipinjam' 
-     AND tanggal_kembali BETWEEN '$hari_ini' AND '$tujuh_hari_lagi'"
+    WHERE status_peminjaman = 'dipinjam' 
+    AND tanggal_kembali BETWEEN '$hari_ini' AND '$tujuh_hari_lagi'"
 )->fetch_assoc()['total'];
+
 
 $aktivitas_terbaru = mysqli_query(
     $koneksi,
@@ -36,7 +37,7 @@ $peminjaman_tenggat = mysqli_query(
     $koneksi,
     "SELECT p.*, a.nama AS nama_anggota, b.judul 
      FROM peminjaman p
-     JOIN anggota a ON p.id_anggota = a.id_anggota
+     JOIN anggota a ON p.id_user = a.id_anggota
      JOIN detail_peminjaman dp ON dp.id_peminjaman = p.id_peminjaman
      JOIN buku b ON dp.id_buku = b.buku_id
      WHERE p.status_peminjaman = 'dipinjam'

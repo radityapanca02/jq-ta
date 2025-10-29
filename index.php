@@ -29,7 +29,7 @@ if (isset($_POST['login'])) {
         // Log aktivitas login
         $id_user = $data['id_user'];
         mysqli_query($koneksi, "INSERT INTO log_aktivitas (id_user, aktivitas, waktu) 
-                               VALUES ('$id_user', 'Melakukan Login', NOW())");
+                            VALUES ('$id_user', 'Melakukan Login', NOW())");
 
         // Redirect ke halaman sesuai role
         if ($data['role'] == 'admin') {
